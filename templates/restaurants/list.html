@@ -1,0 +1,794 @@
+{% extends 'base.html' %}
+{% load restaurant_tags %}
+
+{% block title %}لیست رستوران‌ها{% endblock %}
+
+{% block sidebar_left %}
+<div class="sidebar">
+    <div class="advertisements">
+        <h3 class="ad-title">تبلیغات</h3>
+        {% for ad in left_ads %}
+        <div class="ad-item">
+            {% if ad.link %}
+            <a href="{{ ad.link }}" target="_blank" rel="noopener">
+            {% endif %}
+                {% if ad.ad_type == 'gif' and ad.gif_file %}
+                    <img src="{{ ad.gif_file.url }}" alt="{{ ad.title }}" class="ad-image">
+                {% elif ad.ad_type == 'video' %}
+                    {% if ad.video_file %}
+                        <video class="ad-video" autoplay muted loop playsinline>
+                            <source src="{{ ad.video_file.url }}" type="video/mp4">
+                        </video>
+                    {% elif ad.video_url %}
+                        <iframe src="{{ ad.video_url }}" class="ad-video" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+                    {% endif %}
+                {% else %}
+                    {% if ad.image %}
+                        <img src="{{ ad.image.url }}" alt="{{ ad.title }}" class="ad-image">
+                    {% endif %}
+                {% endif %}
+            {% if ad.link %}
+            </a>
+            {% endif %}
+        </div>
+        {% empty %}
+        <div class="ad-placeholder">فضای تبلیغاتی</div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
+
+{% block sidebar_right %}
+<div class="sidebar">
+    <div class="advertisements">
+        <h3 class="ad-title">تبلیغات</h3>
+        {% for ad in right_ads %}
+        <div class="ad-item">
+            {% if ad.link %}
+            <a href="{{ ad.link }}" target="_blank" rel="noopener">
+            {% endif %}
+                {% if ad.ad_type == 'gif' and ad.gif_file %}
+                    <img src="{{ ad.gif_file.url }}" alt="{{ ad.title }}" class="ad-image">
+                {% elif ad.ad_type == 'video' %}
+                    {% if ad.video_file %}
+                        <video class="ad-video" autoplay muted loop playsinline>
+                            <source src="{{ ad.video_file.url }}" type="video/mp4">
+                        </video>
+                    {% elif ad.video_url %}
+                        <iframe src="{{ ad.video_url }}" class="ad-video" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+                    {% endif %}
+                {% else %}
+                    {% if ad.image %}
+                        <img src="{{ ad.image.url }}" alt="{{ ad.title }}" class="ad-image">
+                    {% endif %}
+                {% endif %}
+            {% if ad.link %}
+            </a>
+            {% endif %}
+        </div>
+        {% empty %}
+        <div class="ad-placeholder">فضای تبلیغاتی</div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .advertisements {
+        background: white;
+        padding: 20px;
+        border-radius: 12px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+        position: sticky;
+        top: 20px;
+    }
+    
+    .ad-title {
+        font-size: 1.2em;
+        color: #2c3e50;
+        margin-bottom: 15px;
+        text-align: center;
+        padding-bottom: 10px;
+        border-bottom: 2px solid #ecf0f1;
+    }
+    
+    .ad-item {
+        margin-bottom: 20px;
+        border-radius: 8px;
+        overflow: hidden;
+        transition: transform 0.3s;
+    }
+    
+    .ad-item:hover {
+        transform: translateY(-3px);
+    }
+    
+    .ad-item:last-child {
+        margin-bottom: 0;
+    }
+    
+    .ad-image, .ad-video {
+        width: 100%;
+        height: auto;
+        display: block;
+        border-radius: 8px;
+        max-height: 300px;
+        object-fit: cover;
+    }
+    
+    .ad-video {
+        background: #000;
+    }
+    
+    .ad-placeholder {
+        background: #ecf0f1;
+        padding: 40px 20px;
+        text-align: center;
+        color: #95a5a6;
+        border-radius: 8px;
+        border: 2px dashed #bdc3c7;
+        margin-bottom: 15px;
+    }
+    
+    .restaurant-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 25px;
+        margin-top: 20px;
+    }
+    
+    @media (max-width: 1200px) {
+        .restaurant-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
+    
+    @media (max-width: 768px) {
+        .restaurant-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+    
+    .restaurant-card {
+        background: white;
+        border-radius: 12px;
+        padding: 0;
+        transition: all 0.3s;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        cursor: pointer;
+        overflow: hidden;
+        border: 1px solid #e9ecef;
+    }
+    
+    .restaurant-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+    }
+    
+    .restaurant-card .image-preview {
+        width: 100%;
+        height: 220px;
+        object-fit: cover;
+        display: block;
+    }
+    
+    .no-image {
+        width: 100%;
+        height: 220px;
+        background: linear-gradient(135deg, #e9ecef 0%, #dee2e6 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #6c757d;
+        font-size: 1.1em;
+    }
+    
+    .restaurant-card-content {
+        padding: 20px;
+    }
+    
+    .restaurant-card h2 {
+        color: #2c3e50;
+        margin-bottom: 12px;
+        font-size: 1.4em;
+        font-weight: 600;
+    }
+    
+    .restaurant-card .address {
+        color: #495057;
+        margin-bottom: 15px;
+        line-height: 1.7;
+        font-size: 0.95em;
+    }
+    
+    .restaurant-card .address strong {
+        color: #2c3e50;
+    }
+    
+    .restaurant-card .phones {
+        margin-top: 15px;
+        padding-top: 15px;
+        border-top: 1px solid #e9ecef;
+    }
+    
+    .restaurant-card .phones strong {
+        color: #2c3e50;
+        display: block;
+        margin-bottom: 8px;
+        font-size: 0.9em;
+    }
+    
+    .restaurant-card .phone-item {
+        color: #3498db;
+        margin: 5px 0;
+        font-weight: 500;
+        font-size: 0.95em;
+    }
+    
+    .restaurant-card .rating {
+        margin-top: 15px;
+        padding-top: 15px;
+        border-top: 1px solid #e9ecef;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+    
+    .restaurant-card .rating-stars {
+        color: #f39c12;
+        font-size: 1.4em;
+        letter-spacing: 2px;
+    }
+    
+    .restaurant-card .rating-text {
+        color: #2c3e50;
+        font-weight: 600;
+        font-size: 1em;
+    }
+    
+    .restaurant-card .rating-count {
+        color: #6c757d;
+        font-size: 0.85em;
+    }
+    
+    .no-rating {
+        color: #95a5a6;
+        font-size: 0.9em;
+        text-align: center;
+        margin-top: 15px;
+        padding-top: 15px;
+        border-top: 1px solid #e9ecef;
+    }
+    
+    .view-details {
+        margin-top: 18px;
+        text-align: center;
+    }
+    
+    .view-details .btn {
+        width: 100%;
+        background: #3498db;
+        padding: 12px;
+    }
+    
+    .view-details .btn:hover {
+        background: #2980b9;
+    }
+    
+    .page-title {
+        color: #2c3e50;
+        margin-bottom: 30px;
+        text-align: center;
+        font-size: 2em;
+        font-weight: 700;
+    }
+    
+    .empty-state {
+        text-align: center;
+        padding: 80px 20px;
+        color: #6c757d;
+    }
+    
+    .empty-state h2 {
+        font-size: 2em;
+        margin-bottom: 15px;
+        color: #2c3e50;
+    }
+    
+    .pagination {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 8px;
+        margin-top: 40px;
+        padding: 20px;
+        flex-wrap: wrap;
+    }
+    
+    .pagination a, .pagination span {
+        padding: 10px 16px;
+        border-radius: 8px;
+        text-decoration: none;
+        color: #3498db;
+        background: white;
+        border: 2px solid #3498db;
+        transition: all 0.3s;
+        font-weight: 500;
+        font-size: 0.95em;
+    }
+    
+    .pagination a:hover {
+        background: #3498db;
+        color: white;
+        transform: translateY(-2px);
+    }
+    
+    .pagination .current {
+        background: #3498db;
+        color: white;
+        border-color: #3498db;
+    }
+    
+    .pagination-info {
+        text-align: center;
+        margin-top: 20px;
+        color: #6c757d;
+        font-size: 0.95em;
+    }
+    
+    .filters-section {
+        background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+        padding: 30px;
+        border-radius: 16px;
+        margin-bottom: 30px;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        border: 1px solid #e9ecef;
+    }
+    
+    .filters-header {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 25px;
+        padding-bottom: 15px;
+        border-bottom: 2px solid #3498db;
+    }
+    
+    .filters-header h2 {
+        color: #2c3e50;
+        font-size: 1.4em;
+        font-weight: 600;
+        margin: 0;
+    }
+    
+    .filters-header::before {
+        content: "🔍";
+        font-size: 1.5em;
+    }
+    
+    .filters-form {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 20px;
+        align-items: start;
+    }
+    
+    .filter-group {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+    
+    .filter-group label {
+        font-size: 0.95em;
+        color: #2c3e50;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+    
+    .filter-group label::before {
+        content: "▸";
+        color: #3498db;
+        font-size: 1.1em;
+    }
+    
+    .filter-select {
+        padding: 12px 15px;
+        border: 2px solid #e9ecef;
+        border-radius: 10px;
+        font-size: 0.95em;
+        color: #2c3e50;
+        background: white;
+        transition: all 0.3s;
+        font-family: inherit;
+        cursor: pointer;
+    }
+    
+    .filter-select:hover {
+        border-color: #3498db;
+        box-shadow: 0 2px 8px rgba(52, 152, 219, 0.1);
+    }
+    
+    .filter-select:focus {
+        outline: none;
+        border-color: #3498db;
+        box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+    }
+    
+    .custom-multiselect {
+        position: relative;
+    }
+    
+    .multiselect-display {
+        padding: 12px 15px;
+        border: 2px solid #e9ecef;
+        border-radius: 10px;
+        font-size: 0.95em;
+        color: #2c3e50;
+        background: white;
+        cursor: pointer;
+        transition: all 0.3s;
+        font-family: inherit;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    
+    .multiselect-display:hover {
+        border-color: #3498db;
+        box-shadow: 0 2px 8px rgba(52, 152, 219, 0.1);
+    }
+    
+    .multiselect-display.active {
+        border-color: #3498db;
+        box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+    }
+    
+    .multiselect-display::after {
+        content: "▼";
+        font-size: 0.8em;
+        color: #6c757d;
+        transition: transform 0.3s;
+    }
+    
+    .multiselect-display.active::after {
+        transform: rotate(180deg);
+    }
+    
+    .multiselect-dropdown {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        background: white;
+        border: 2px solid #3498db;
+        border-radius: 10px;
+        margin-top: 5px;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+        z-index: 1000;
+        max-height: 200px;
+        overflow-y: auto;
+        display: none;
+    }
+    
+    .multiselect-dropdown.active {
+        display: block;
+    }
+    
+    .multiselect-option {
+        padding: 12px 15px;
+        cursor: pointer;
+        transition: all 0.2s;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+    
+    .multiselect-option:hover {
+        background: #ebf5fb;
+    }
+    
+    .multiselect-option input[type="checkbox"] {
+        width: 18px;
+        height: 18px;
+        cursor: pointer;
+        accent-color: #3498db;
+    }
+    
+    .multiselect-option label {
+        cursor: pointer;
+        margin: 0;
+        flex: 1;
+        font-weight: 500;
+        color: #2c3e50;
+    }
+    
+    .multiselect-option label::before {
+        display: none;
+    }
+    
+    .selected-count {
+        color: #3498db;
+        font-weight: 600;
+        font-size: 0.9em;
+    }
+    
+    .filter-actions {
+        display: flex;
+        gap: 12px;
+        align-items: center;
+        grid-column: 1 / -1;
+        justify-content: center;
+        margin-top: 10px;
+        padding-top: 20px;
+        border-top: 2px solid #e9ecef;
+    }
+    
+    .btn-filter {
+        padding: 12px 30px;
+        background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+        color: white;
+        border: none;
+        border-radius: 10px;
+        cursor: pointer;
+        font-size: 1em;
+        font-weight: 600;
+        transition: all 0.3s;
+        font-family: inherit;
+        box-shadow: 0 4px 12px rgba(52, 152, 219, 0.3);
+    }
+    
+    .btn-filter:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 16px rgba(52, 152, 219, 0.4);
+    }
+    
+    .btn-filter:active {
+        transform: translateY(0);
+    }
+    
+    .btn-filter-reset {
+        padding: 12px 30px;
+        background: linear-gradient(135deg, #95a5a6 0%, #7f8c8d 100%);
+        color: white;
+        border: none;
+        border-radius: 10px;
+        text-decoration: none;
+        font-size: 1em;
+        font-weight: 600;
+        transition: all 0.3s;
+        display: inline-block;
+        box-shadow: 0 4px 12px rgba(149, 165, 166, 0.3);
+    }
+    
+    .btn-filter-reset:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 16px rgba(149, 165, 166, 0.4);
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<h1 class="page-title">لیست رستوران‌ها</h1>
+
+<!-- فیلترها -->
+<div class="filters-section">
+    <div class="filters-header">
+        <h2>فیلترهای جستجو</h2>
+    </div>
+    <form method="get" class="filters-form">
+        <div class="filter-group">
+            <label for="city">شهر</label>
+            <select name="city" id="city" class="filter-select">
+                <option value="">همه شهرها</option>
+                {% for city in cities %}
+                    <option value="{{ city.name }}" {% if current_city == city.name %}selected{% endif %}>
+                        {{ city.get_name_display }}
+                    </option>
+                {% endfor %}
+            </select>
+        </div>
+        
+        <div class="filter-group">
+            <label for="rating">حداقل امتیاز</label>
+            <select name="rating" id="rating" class="filter-select">
+                <option value="">همه</option>
+                <option value="4" {% if current_rating == "4" %}selected{% endif %}>4 ستاره و بالاتر</option>
+                <option value="3" {% if current_rating == "3" %}selected{% endif %}>3 ستاره و بالاتر</option>
+                <option value="2" {% if current_rating == "2" %}selected{% endif %}>2 ستاره و بالاتر</option>
+                <option value="1" {% if current_rating == "1" %}selected{% endif %}>1 ستاره و بالاتر</option>
+            </select>
+        </div>
+        
+        <div class="filter-group">
+            <label for="meal_type">نوع وعده</label>
+            <div class="custom-multiselect">
+                <div class="multiselect-display" id="meal_type_display">
+                    <span>
+                        {% if current_meal_types %}
+                            {% if current_meal_types|length == 1 %}
+                                {% if "breakfast" in current_meal_types %}صبحانه{% elif "lunch" in current_meal_types %}ناهار{% elif "dinner" in current_meal_types %}شام{% elif "snack" in current_meal_types %}میان‌وعده{% elif "all" in current_meal_types %}همه{% endif %}
+                            {% else %}
+                                <span class="selected-count">{{ current_meal_types|length }} مورد انتخاب شده</span>
+                            {% endif %}
+                        {% else %}
+                            همه موارد
+                        {% endif %}
+                    </span>
+                </div>
+                <div class="multiselect-dropdown" id="meal_type_dropdown">
+                    <div class="multiselect-option">
+                        <input type="checkbox" name="meal_type" id="meal_breakfast" value="breakfast" {% if "breakfast" in current_meal_types %}checked{% endif %}>
+                        <label for="meal_breakfast">صبحانه</label>
+                    </div>
+                    <div class="multiselect-option">
+                        <input type="checkbox" name="meal_type" id="meal_lunch" value="lunch" {% if "lunch" in current_meal_types %}checked{% endif %}>
+                        <label for="meal_lunch">ناهار</label>
+                    </div>
+                    <div class="multiselect-option">
+                        <input type="checkbox" name="meal_type" id="meal_dinner" value="dinner" {% if "dinner" in current_meal_types %}checked{% endif %}>
+                        <label for="meal_dinner">شام</label>
+                    </div>
+                    <div class="multiselect-option">
+                        <input type="checkbox" name="meal_type" id="meal_snack" value="snack" {% if "snack" in current_meal_types %}checked{% endif %}>
+                        <label for="meal_snack">میان‌وعده</label>
+                    </div>
+                    <div class="multiselect-option">
+                        <input type="checkbox" name="meal_type" id="meal_all" value="all" {% if "all" in current_meal_types %}checked{% endif %}>
+                        <label for="meal_all">همه</label>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="filter-actions">
+            <button type="submit" class="btn-filter"> اعمال فیلتر</button>
+            <a href="{% url 'restaurants:list' %}" class="btn-filter-reset"> پاک کردن</a>
+        </div>
+    </form>
+</div>
+
+{% if restaurants %}
+    <div class="restaurant-grid">
+        {% for restaurant in restaurants %}
+        <div class="restaurant-card" onclick="window.location.href='{% url 'restaurants:detail' restaurant.pk %}'">
+            {% if restaurant.images.all %}
+                <img src="{{ restaurant.images.first.image.url }}" alt="{{ restaurant.name }}" class="image-preview">
+            {% else %}
+                <div class="no-image">📷 بدون عکس</div>
+            {% endif %}
+            
+            <div class="restaurant-card-content">
+                <h2>{{ restaurant.name }}</h2>
+                
+                <div class="address">
+                    <strong>📍 آدرس:</strong><br>
+                    {{ restaurant.address }}
+                </div>
+                
+                {% if restaurant.phone_numbers.all %}
+                <div class="phones">
+                    <strong>📞 تلفن‌ها:</strong>
+                    {% for phone in restaurant.phone_numbers.all %}
+                        <div class="phone-item">{{ phone.phone }}</div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+                
+                <div class="rating">
+                    {% if restaurant.avg_rating %}
+                        <div class="rating-stars">
+                            {% for star in restaurant.avg_rating|star_rating %}
+                                {{ star }}
+                            {% endfor %}
+                        </div>
+                        <div>
+                            <div class="rating-text">{{ restaurant.avg_rating|floatformat:1 }} از 5</div>
+                            <div class="rating-count">({{ restaurant.total_ratings }} امتیاز)</div>
+                        </div>
+                    {% else %}
+                        <div class="no-rating">⭐ هنوز امتیازی ثبت نشده</div>
+                    {% endif %}
+                </div>
+                
+                <div class="view-details">
+                    <a href="{% url 'restaurants:detail' restaurant.pk %}" class="btn" onclick="event.stopPropagation();">مشاهده جزئیات</a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    
+    <!-- Pagination -->
+    {% if restaurants.has_other_pages %}
+    <div class="pagination">
+        {% if restaurants.has_previous %}
+            <a href="?page=1">&laquo; اول</a>
+            <a href="?page={{ restaurants.previous_page_number }}">قبلی</a>
+        {% endif %}
+        
+        {% for num in restaurants.paginator.page_range %}
+            {% if restaurants.number == num %}
+                <span class="current">{{ num }}</span>
+            {% elif num > restaurants.number|add:'-3' and num < restaurants.number|add:'3' %}
+                <a href="?page={{ num }}">{{ num }}</a>
+            {% endif %}
+        {% endfor %}
+        
+        {% if restaurants.has_next %}
+            <a href="?page={{ restaurants.next_page_number }}">بعدی</a>
+            <a href="?page={{ restaurants.paginator.num_pages }}">آخر &raquo;</a>
+        {% endif %}
+    </div>
+    
+    <div class="pagination-info">
+        نمایش {{ restaurants.start_index }} تا {{ restaurants.end_index }} از {{ restaurants.paginator.count }} رستوران
+    </div>
+    {% endif %}
+{% else %}
+    <div class="empty-state">
+        <h2>هنوز رستورانی ثبت نشده است</h2>
+        <p>برای افزودن رستوران، به پنل ادمین مراجعه کنید.</p>
+        <a href="/admin/" class="btn" style="margin-top: 20px;">ورود به پنل ادمین</a>
+    </div>
+{% endif %}
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Custom Multi-Select برای نوع وعده
+    document.addEventListener('DOMContentLoaded', function() {
+        const display = document.getElementById('meal_type_display');
+        const dropdown = document.getElementById('meal_type_dropdown');
+        const checkboxes = dropdown.querySelectorAll('input[type="checkbox"]');
+        
+        // باز و بسته کردن dropdown
+        display.addEventListener('click', function(e) {
+            e.stopPropagation();
+            dropdown.classList.toggle('active');
+            display.classList.toggle('active');
+        });
+        
+        // بستن dropdown وقتی خارج از آن کلیک می‌شود
+        document.addEventListener('click', function(e) {
+            if (!display.contains(e.target) && !dropdown.contains(e.target)) {
+                dropdown.classList.remove('active');
+                display.classList.remove('active');
+            }
+        });
+        
+        // به‌روزرسانی نمایش بر اساس انتخاب‌ها
+        function updateDisplay() {
+            const selected = Array.from(checkboxes).filter(cb => cb.checked);
+            const labels = {
+                'breakfast': 'صبحانه',
+                'lunch': 'ناهار',
+                'dinner': 'شام',
+                'snack': 'میان‌وعده',
+                'all': 'همه'
+            };
+            
+            if (selected.length === 0) {
+                display.querySelector('span').innerHTML = 'همه موارد';
+            } else if (selected.length === 1) {
+                display.querySelector('span').innerHTML = labels[selected[0].value];
+            } else {
+                display.querySelector('span').innerHTML = '<span class="selected-count">' + selected.length + ' مورد انتخاب شده</span>';
+            }
+        }
+        
+        // به‌روزرسانی نمایش وقتی checkbox تغییر می‌کند
+        checkboxes.forEach(checkbox => {
+            checkbox.addEventListener('change', updateDisplay);
+        });
+        
+        // مقداردهی اولیه
+        updateDisplay();
+    });
+</script>
+{% endblock %}
