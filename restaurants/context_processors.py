@@ -7,3 +7,6 @@ def categories(request):
         'categories': Category.objects.filter(is_active=True).order_by('order')
     }
 
+
+
+

@@ -1,12 +1,11 @@
 {% extends 'base.html' %}
-{% block body_class %}restaurant-page{% endblock %}
 
-{% block title %}{{ restaurant.name }}{% endblock %}
+{% block title %}{{ gym.name }}{% endblock %}
 
 {% block header %}
 <div class="header">
-    <h1>🍽️ اپلیکیشن رستوران</h1>
-    <p>رستوران‌های برتر شهر</p>
+    <h1>💪 اپلیکیشن باشگاه</h1>
+    <p>باشگاه‌های برتر شهر</p>
 </div>
 {% endblock %}
 
@@ -22,21 +21,21 @@
         background: #7f8c8d;
     }
     
-    .restaurant-header {
+    .gym-header {
         text-align: center;
         margin-bottom: 30px;
         padding-bottom: 20px;
         border-bottom: 2px solid #e9ecef;
     }
     
-    .restaurant-header h1 {
+    .gym-header h1 {
         color: #2c3e50;
         font-size: 2.5em;
         margin-bottom: 15px;
         font-weight: 700;
     }
     
-    .restaurant-info {
+    .gym-info {
         margin-bottom: 30px;
     }
     
@@ -132,12 +131,12 @@
     }
     
     .gallery-thumbnails::-webkit-scrollbar-thumb {
-        background: #667eea;
+        background: #3498db;
         border-radius: 10px;
     }
     
     .gallery-thumbnails::-webkit-scrollbar-thumb:hover {
-        background: #764ba2;
+        background: #2980b9;
     }
     
     .thumbnail {
@@ -158,7 +157,7 @@
     
     .thumbnail.active {
         opacity: 1;
-        border-color: #667eea;
+        border-color: #3498db;
     }
     
     .thumbnail img {
@@ -261,7 +260,7 @@
     
     .form-input:focus, .form-textarea:focus {
         outline: none;
-        border-color: #667eea;
+        border-color: #3498db;
     }
     
     .rating-input-group {
@@ -285,8 +284,8 @@
     }
     
     .rating-input-group label.rating-label:hover {
-        border-color: #667eea;
-        background: #f0f0ff;
+        border-color: #3498db;
+        background: #ebf5fb;
     }
     
     .rating-input-group input[type="radio"] {
@@ -405,10 +404,10 @@
 {% endblock %}
 
 {% block content %}
-<a href="{% url 'restaurants:list' %}" class="btn back-link">← بازگشت به لیست</a>
+<a href="{% url 'gym:list' %}" class="btn back-link">← بازگشت به لیست</a>
 
-<div class="restaurant-header">
-    <h1>{{ restaurant.name }}</h1>
+<div class="gym-header">
+    <h1>{{ gym.name }}</h1>
     {% if avg_rating > 0 %}
     <div class="rating-section">
         <div class="rating-display">
@@ -430,17 +429,17 @@
     {% endif %}
 </div>
 
-<div class="restaurant-info">
+<div class="gym-info">
     <div class="info-section">
         <h3>📍 آدرس</h3>
-        <p>{{ restaurant.address }}</p>
+        <p>{{ gym.address }}</p>
     </div>
     
-    {% if restaurant.phone_numbers.all %}
+    {% if gym.phone_numbers.all %}
     <div class="info-section">
         <h3>📞 شماره‌های تماس</h3>
         <ul class="phone-list">
-            {% for phone in restaurant.phone_numbers.all %}
+            {% for phone in gym.phone_numbers.all %}
                 <li>{{ phone.phone }}</li>
             {% endfor %}
         </ul>
@@ -449,18 +448,18 @@
 </div>
 
 <div class="image-gallery">
-    <h3>عکس‌های رستوران</h3>
+    <h3>عکس‌های باشگاه</h3>
     
-    {% if restaurant.images.all %}
+    {% if gym.images.all %}
         <div class="gallery-container">
             <div class="gallery-main">
-                <img id="main-image" src="{{ restaurant.images.first.image.url }}" alt="{{ restaurant.name }}">
+                <img id="main-image" src="{{ gym.images.first.image.url }}" alt="{{ gym.name }}">
             </div>
             
             <div class="gallery-thumbnails">
-                {% for image in restaurant.images.all %}
+                {% for image in gym.images.all %}
                     <div class="thumbnail {% if forloop.first %}active{% endif %}" onclick="changeImage('{{ image.image.url }}', this)">
-                        <img src="{{ image.image.url }}" alt="{{ image.description|default:restaurant.name }}">
+                        <img src="{{ image.image.url }}" alt="{{ image.description|default:gym.name }}">
                     </div>
                 {% endfor %}
             </div>
@@ -468,16 +467,16 @@
     {% else %}
         <div class="no-images">
             <h3>📷</h3>
-            <p>هنوز عکسی برای این رستوران ثبت نشده است</p>
+            <p>هنوز عکسی برای این باشگاه ثبت نشده است</p>
         </div>
     {% endif %}
 </div>
 
-{% if restaurant.description %}
-<div class="restaurant-info" style="margin-top: 30px;">
+{% if gym.description %}
+<div class="gym-info" style="margin-top: 30px;">
     <div class="info-section">
         <h3>📝 توضیحات</h3>
-        <p>{{ restaurant.description|linebreaks }}</p>
+        <p>{{ gym.description|linebreaks }}</p>
     </div>
 </div>
 {% endif %}

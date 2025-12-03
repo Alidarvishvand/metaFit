@@ -5,6 +5,13 @@ __pycache__/
 
 # C extensions
 *.so
+*.png
+*.jpg
+*.jpeg
+*.gif
+*.bmp
+*.tiff
+
 
 # Distribution / packaging
 .Python
@@ -179,3 +186,4 @@ cython_debug/
 #  refer to https://docs.cursor.com/context/ignore-files
 .cursorignore
 .cursorindexingignore
+/trainers/migrations

@@ -220,7 +220,14 @@ class Advertisement(models.Model):
         ('right', 'سمت راست'),
     ]
     
+    SECTION_CHOICES = [
+        ('gym', 'باشگاه'),
+        ('restaurant', 'رستوران'),
+        ('trainer', 'مربیان'),
+    ]
+    
     title = models.CharField(max_length=200, verbose_name="عنوان")
+    section = models.CharField(max_length=20, choices=SECTION_CHOICES, default='gym', verbose_name="بخش")
     ad_type = models.CharField(max_length=10, choices=AD_TYPE_CHOICES, default='image', verbose_name="نوع تبلیغ")
     image = models.ImageField(upload_to='advertisements/', blank=True, null=True, verbose_name="عکس")
     gif_file = models.FileField(upload_to='advertisements/gifs/', blank=True, null=True, verbose_name="فایل گیف")
@@ -238,4 +245,4 @@ class Advertisement(models.Model):
         ordering = ['position', 'order', '-created_at']
 
     def __str__(self):
-        return f"{self.title} - {self.get_position_display()}"
+        return f"{self.title} - {self.get_section_display()} - {self.get_position_display()}"

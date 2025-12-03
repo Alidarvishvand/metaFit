@@ -1,13 +1,14 @@
 {% extends 'base.html' %}
-{% load restaurant_tags %}
-{% block body_class %}restaurant-page{% endblock %}
+{% load trainer_tags %}
 
-{% block title %}لیست رستوران‌ها{% endblock %}
+{% block title %}لیست مربی‌ها{% endblock %}
+
+{% block body_class %}trainer-page{% endblock %}
 
 {% block header %}
 <div class="header">
-    <h1>🍽️ اپلیکیشن رستوران</h1>
-    <p>رستوران‌های برتر شهر</p>
+    <h1> اپلیکیشن مربیان</h1>
+    <p>مربیان برتر شهر</p>
 </div>
 {% endblock %}
 
@@ -140,7 +141,7 @@
         margin-bottom: 15px;
     }
     
-    .restaurant-grid {
+    .gym-grid {
         display: grid;
         grid-template-columns: repeat(3, 1fr);
         gap: 25px;
@@ -148,18 +149,18 @@
     }
     
     @media (max-width: 1200px) {
-        .restaurant-grid {
+        .gym-grid {
             grid-template-columns: repeat(2, 1fr);
         }
     }
     
     @media (max-width: 768px) {
-        .restaurant-grid {
+        .gym-grid {
             grid-template-columns: 1fr;
         }
     }
     
-    .restaurant-card {
+    .gym-card {
         background: rgba(255, 255, 255, 0.95);
         border-radius: 12px;
         padding: 0;
@@ -171,12 +172,12 @@
         backdrop-filter: blur(5px);
     }
     
-    .restaurant-card:hover {
+    .gym-card:hover {
         transform: translateY(-5px);
         box-shadow: 0 8px 20px rgba(0,0,0,0.15);
     }
     
-    .restaurant-card .image-preview {
+    .gym-card .image-preview {
         width: 100%;
         height: 220px;
         object-fit: cover;
@@ -194,49 +195,49 @@
         font-size: 1.1em;
     }
     
-    .restaurant-card-content {
+    .gym-card-content {
         padding: 20px;
     }
     
-    .restaurant-card h2 {
+    .gym-card h2 {
         color: #2c3e50;
         margin-bottom: 12px;
         font-size: 1.4em;
         font-weight: 600;
     }
     
-    .restaurant-card .address {
+    .gym-card .address {
         color: #495057;
         margin-bottom: 15px;
         line-height: 1.7;
         font-size: 0.95em;
     }
     
-    .restaurant-card .address strong {
+    .gym-card .address strong {
         color: #2c3e50;
     }
     
-    .restaurant-card .phones {
+    .gym-card .phones {
         margin-top: 15px;
         padding-top: 15px;
         border-top: 1px solid #e9ecef;
     }
     
-    .restaurant-card .phones strong {
+    .gym-card .phones strong {
         color: #2c3e50;
         display: block;
         margin-bottom: 8px;
         font-size: 0.9em;
     }
     
-    .restaurant-card .phone-item {
+    .gym-card .phone-item {
         color: #3498db;
         margin: 5px 0;
         font-weight: 500;
         font-size: 0.95em;
     }
     
-    .restaurant-card .rating {
+    .gym-card .rating {
         margin-top: 15px;
         padding-top: 15px;
         border-top: 1px solid #e9ecef;
@@ -247,19 +248,19 @@
         flex-wrap: wrap;
     }
     
-    .restaurant-card .rating-stars {
+    .gym-card .rating-stars {
         color: #f39c12;
         font-size: 1.4em;
         letter-spacing: 2px;
     }
     
-    .restaurant-card .rating-text {
+    .gym-card .rating-text {
         color: #2c3e50;
         font-weight: 600;
         font-size: 1em;
     }
     
-    .restaurant-card .rating-count {
+    .gym-card .rating-count {
         color: #6c757d;
         font-size: 0.85em;
     }
@@ -358,7 +359,7 @@
         border: 1px solid rgba(255, 255, 255, 0.8);
         backdrop-filter: blur(10px);
         position: relative;
-        overflow: visible;
+        overflow: visible; /* اجازه می‌دهد dropdown ها روی باکس‌های زیر دیده شوند */
         z-index: 5;
     }
     
@@ -523,7 +524,8 @@
         transform: translateY(0);
     }
     
-    .custom-multiselect {
+    /* Multi-select Styles - حرفه‌ای و لمسی */
+    .multiselect-wrapper {
         position: relative;
     }
     
@@ -695,6 +697,9 @@
         flex: 1;
         font-weight: 500;
         color: #2c3e50;
+        font-size: 0.95em;
+        user-select: none;
+        -webkit-user-select: none;
     }
     
     .multiselect-option label::before {
@@ -703,8 +708,12 @@
     
     .selected-count {
         color: #3498db;
-        font-weight: 600;
-        font-size: 0.9em;
+        font-weight: 700;
+        font-size: 0.95em;
+        background: linear-gradient(135deg, rgba(52, 152, 219, 0.1), rgba(52, 152, 219, 0.05));
+        padding: 4px 10px;
+        border-radius: 12px;
+        display: inline-block;
     }
     
     .filter-actions {
@@ -815,7 +824,7 @@
 {% endblock %}
 
 {% block content %}
-<h1 class="page-title">لیست رستوران‌ها</h1>
+<h1 class="page-title">لیست مربی‌ها</h1>
 
 <!-- فیلترها -->
 <div class="filters-section">
@@ -857,44 +866,24 @@
             </select>
         </div>
         
+        <!-- نوع ورزش - Multi-select -->
         <div class="filter-group">
-            <label for="meal_type">نوع وعده</label>
-            <div class="custom-multiselect">
-                <div class="multiselect-display" id="meal_type_display">
-                    <span>
-                        {% if current_meal_types %}
-                            {% if current_meal_types|length == 1 %}
-                                {% if "breakfast" in current_meal_types %}صبحانه{% elif "lunch" in current_meal_types %}ناهار{% elif "dinner" in current_meal_types %}شام{% elif "snack" in current_meal_types %}میان‌وعده{% elif "all" in current_meal_types %}همه{% endif %}
-                            {% else %}
-                                <span class="selected-count">{{ current_meal_types|length }} مورد انتخاب شده</span>
-                            {% endif %}
-                        {% else %}
-                            همه موارد
-                        {% endif %}
-                    </span>
+            <label for="sport_type_display">نوع ورزش</label>
+            <div class="multiselect-wrapper">
+                <div class="multiselect-display" id="sport_type_display">
+                    <span>همه موارد</span>
                     <span class="multiselect-arrow">▼</span>
                 </div>
-                <div class="multiselect-dropdown" id="meal_type_dropdown">
+                <div class="multiselect-dropdown" id="sport_type_dropdown">
+                    {% for sport in sport_types %}
                     <div class="multiselect-option">
-                        <input type="checkbox" name="meal_type" id="meal_breakfast" value="breakfast" {% if "breakfast" in current_meal_types %}checked{% endif %}>
-                        <label for="meal_breakfast">صبحانه</label>
+                        <label>
+                            <input type="checkbox" name="sport_type" value="{{ sport.name }}" 
+                                   {% if sport.name in current_sport_types %}checked{% endif %}>
+                            {{ sport.get_name_display }}
+                        </label>
                     </div>
-                    <div class="multiselect-option">
-                        <input type="checkbox" name="meal_type" id="meal_lunch" value="lunch" {% if "lunch" in current_meal_types %}checked{% endif %}>
-                        <label for="meal_lunch">ناهار</label>
-                    </div>
-                    <div class="multiselect-option">
-                        <input type="checkbox" name="meal_type" id="meal_dinner" value="dinner" {% if "dinner" in current_meal_types %}checked{% endif %}>
-                        <label for="meal_dinner">شام</label>
-                    </div>
-                    <div class="multiselect-option">
-                        <input type="checkbox" name="meal_type" id="meal_snack" value="snack" {% if "snack" in current_meal_types %}checked{% endif %}>
-                        <label for="meal_snack">میان‌وعده</label>
-                    </div>
-                    <div class="multiselect-option">
-                        <input type="checkbox" name="meal_type" id="meal_all" value="all" {% if "all" in current_meal_types %}checked{% endif %}>
-                        <label for="meal_all">همه</label>
-                    </div>
+                    {% endfor %}
                 </div>
             </div>
         </div>
@@ -903,49 +892,49 @@
             <label style="opacity: 0; height: 0; margin: 0; padding: 0; visibility: hidden;">عملیات</label>
             <div style="display: flex; gap: 10px;">
                 <button type="submit" class="btn-filter"> اعمال</button>
-                <a href="{% url 'restaurants:list' %}" class="btn-filter-reset"> حذف</a>
+                <a href="{% url 'trainers:list' %}" class="btn-filter-reset"> حذف</a>
             </div>
         </div>
     </form>
 </div>
 
-{% if restaurants %}
-    <div class="restaurant-grid">
-        {% for restaurant in restaurants %}
-        <div class="restaurant-card" onclick="window.location.href='{% url 'restaurants:detail' restaurant.pk %}'">
-            {% if restaurant.images.all %}
-                <img src="{{ restaurant.images.first.image.url }}" alt="{{ restaurant.name }}" class="image-preview">
+{% if trainers %}
+    <div class="gym-grid">
+        {% for trainer in trainers %}
+        <div class="gym-card" onclick="window.location.href='{% url 'trainers:detail' trainer.pk %}'">
+            {% if trainer.images.all %}
+                <img src="{{ trainer.images.first.image.url }}" alt="{{ trainer.name }}" class="image-preview">
             {% else %}
                 <div class="no-image">📷 بدون عکس</div>
             {% endif %}
             
-            <div class="restaurant-card-content">
-                <h2>{{ restaurant.name }}</h2>
+            <div class="gym-card-content">
+                <h2>{{ trainer.name }}</h2>
                 
                 <div class="address">
                     <strong>📍 آدرس:</strong><br>
-                    {{ restaurant.address }}
+                    {{ trainer.address }}
                 </div>
                 
-                {% if restaurant.phone_numbers.all %}
+                {% if trainer.phone_numbers.all %}
                 <div class="phones">
                     <strong>📞 تلفن‌ها:</strong>
-                    {% for phone in restaurant.phone_numbers.all %}
+                    {% for phone in trainer.phone_numbers.all %}
                         <div class="phone-item">{{ phone.phone }}</div>
                     {% endfor %}
                 </div>
                 {% endif %}
                 
                 <div class="rating">
-                    {% if restaurant.avg_rating %}
+                    {% if trainer.avg_rating %}
                         <div class="rating-stars">
-                            {% for star in restaurant.avg_rating|star_rating %}
+                            {% for star in trainer.avg_rating|star_rating %}
                                 {{ star }}
                             {% endfor %}
                         </div>
                         <div>
-                            <div class="rating-text">{{ restaurant.avg_rating|floatformat:1 }} از 5</div>
-                            <div class="rating-count">({{ restaurant.total_ratings }} امتیاز)</div>
+                            <div class="rating-text">{{ trainer.avg_rating|floatformat:1 }} از 5</div>
+                            <div class="rating-count">({{ trainer.total_ratings }} امتیاز)</div>
                         </div>
                     {% else %}
                         <div class="no-rating">⭐ هنوز امتیازی ثبت نشده</div>
@@ -953,7 +942,7 @@
                 </div>
                 
                 <div class="view-details">
-                    <a href="{% url 'restaurants:detail' restaurant.pk %}" class="btn" onclick="event.stopPropagation();">مشاهده جزئیات</a>
+                    <a href="{% url 'trainers:detail' trainer.pk %}" class="btn" onclick="event.stopPropagation();">مشاهده جزئیات</a>
                 </div>
             </div>
         </div>
@@ -961,35 +950,35 @@
     </div>
     
     <!-- Pagination -->
-    {% if restaurants.has_other_pages %}
+    {% if trainers.has_other_pages %}
     <div class="pagination">
-        {% if restaurants.has_previous %}
+        {% if trainers.has_previous %}
             <a href="?page=1">&laquo; اول</a>
-            <a href="?page={{ restaurants.previous_page_number }}">قبلی</a>
+            <a href="?page={{ trainers.previous_page_number }}">قبلی</a>
         {% endif %}
         
-        {% for num in restaurants.paginator.page_range %}
-            {% if restaurants.number == num %}
+        {% for num in trainers.paginator.page_range %}
+            {% if trainers.number == num %}
                 <span class="current">{{ num }}</span>
-            {% elif num > restaurants.number|add:'-3' and num < restaurants.number|add:'3' %}
+            {% elif num > trainers.number|add:'-3' and num < trainers.number|add:'3' %}
                 <a href="?page={{ num }}">{{ num }}</a>
             {% endif %}
         {% endfor %}
         
-        {% if restaurants.has_next %}
-            <a href="?page={{ restaurants.next_page_number }}">بعدی</a>
-            <a href="?page={{ restaurants.paginator.num_pages }}">آخر &raquo;</a>
+        {% if trainers.has_next %}
+            <a href="?page={{ trainers.next_page_number }}">بعدی</a>
+            <a href="?page={{ trainers.paginator.num_pages }}">آخر &raquo;</a>
         {% endif %}
     </div>
     
     <div class="pagination-info">
-        نمایش {{ restaurants.start_index }} تا {{ restaurants.end_index }} از {{ restaurants.paginator.count }} رستوران
+        نمایش {{ trainers.start_index }} تا {{ trainers.end_index }} از {{ trainers.paginator.count }} مربی
     </div>
     {% endif %}
 {% else %}
     <div class="empty-state">
-        <h2>هنوز رستورانی ثبت نشده است</h2>
-        <p>برای افزودن رستوران، به پنل ادمین مراجعه کنید.</p>
+        <h2>هنوز مربیی ثبت نشده است</h2>
+        <p>برای افزودن مربی، به پنل ادمین مراجعه کنید.</p>
         <a href="/admin/" class="btn" style="margin-top: 20px;">ورود به پنل ادمین</a>
     </div>
 {% endif %}
@@ -997,54 +986,144 @@
 
 {% block extra_js %}
 <script>
-    // Custom Multi-Select برای نوع وعده
+    // Custom Multi-Select حرفه‌ای با پشتیبانی لمسی
     document.addEventListener('DOMContentLoaded', function() {
-        const display = document.getElementById('meal_type_display');
-        const dropdown = document.getElementById('meal_type_dropdown');
-        const checkboxes = dropdown.querySelectorAll('input[type="checkbox"]');
+        let touchStartY = 0;
+        let touchEndY = 0;
         
-        // باز و بسته کردن dropdown
-        display.addEventListener('click', function(e) {
-            e.stopPropagation();
-            dropdown.classList.toggle('active');
-            display.classList.toggle('active');
-        });
-        
-        // بستن dropdown وقتی خارج از آن کلیک می‌شود
-        document.addEventListener('click', function(e) {
-            if (!display.contains(e.target) && !dropdown.contains(e.target)) {
-                dropdown.classList.remove('active');
-                display.classList.remove('active');
-            }
-        });
-        
-        // به‌روزرسانی نمایش بر اساس انتخاب‌ها
-        function updateDisplay() {
-            const selected = Array.from(checkboxes).filter(cb => cb.checked);
-            const labels = {
-                'breakfast': 'صبحانه',
-                'lunch': 'ناهار',
-                'dinner': 'شام',
-                'snack': 'میان‌وعده',
-                'all': 'همه'
-            };
+        // تابع برای مدیریت dropdown
+        function setupMultiSelect(displayId, dropdownId) {
+            const display = document.getElementById(displayId);
+            const dropdown = document.getElementById(dropdownId);
+            const checkboxes = dropdown.querySelectorAll('input[type="checkbox"]');
             
-            if (selected.length === 0) {
-                display.querySelector('span').innerHTML = 'همه موارد';
-            } else if (selected.length === 1) {
-                display.querySelector('span').innerHTML = labels[selected[0].value];
-            } else {
-                display.querySelector('span').innerHTML = '<span class="selected-count">' + selected.length + ' مورد انتخاب شده</span>';
+            if (!display || !dropdown) return;
+            
+            // باز و بسته کردن dropdown - پشتیبانی از کلیک و لمسی
+            function toggleDropdown(e) {
+                if (e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                }
+                
+                const isActive = dropdown.classList.contains('active');
+                
+                // بستن سایر dropdownها
+                document.querySelectorAll('.multiselect-dropdown.active').forEach(dd => {
+                    if (dd !== dropdown) {
+                        dd.classList.remove('active');
+                        dd.previousElementSibling?.classList.remove('active');
+                    }
+                });
+                
+                dropdown.classList.toggle('active');
+                display.classList.toggle('active');
+                
+                // انیمیشن smooth
+                if (!isActive) {
+                    dropdown.style.opacity = '0';
+                    dropdown.style.transform = 'translateY(-10px)';
+                    setTimeout(() => {
+                        dropdown.style.transition = 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)';
+                        dropdown.style.opacity = '1';
+                        dropdown.style.transform = 'translateY(0)';
+                    }, 10);
+                }
             }
+            
+            // رویدادهای مختلف برای پشتیبانی بهتر از لمسی
+            display.addEventListener('click', toggleDropdown);
+            display.addEventListener('touchend', function(e) {
+                e.preventDefault();
+                toggleDropdown(e);
+            }, { passive: false });
+            
+            // به‌روزرسانی نمایش بر اساس انتخاب‌ها
+            function updateDisplay() {
+                const selected = Array.from(checkboxes).filter(cb => cb.checked);
+                const span = display.querySelector('span');
+                
+                if (selected.length === 0) {
+                    span.innerHTML = 'همه موارد';
+                    span.className = '';
+                } else if (selected.length === 1) {
+                    span.innerHTML = selected[0].parentElement.textContent.trim();
+                    span.className = '';
+                } else {
+                    span.innerHTML = '<span class="selected-count">' + selected.length + ' مورد انتخاب شده</span>';
+                }
+            }
+            
+            // رویداد تغییر برای checkboxها
+            checkboxes.forEach(checkbox => {
+                checkbox.addEventListener('change', function() {
+                    updateDisplay();
+                    // افکت لمسی
+                    this.parentElement.style.transform = 'scale(0.95)';
+                    setTimeout(() => {
+                        this.parentElement.style.transform = '';
+                    }, 150);
+                });
+                
+                // بهبود تجربه لمسی برای checkbox
+                checkbox.addEventListener('touchstart', function(e) {
+                    e.stopPropagation();
+                }, { passive: true });
+            });
+            
+            // مقداردهی اولیه
+            updateDisplay();
+            
+            // بستن dropdown وقتی خارج از آن کلیک/لمس می‌شود
+            function closeOnOutside(e) {
+                if (!display.contains(e.target) && !dropdown.contains(e.target)) {
+                    dropdown.classList.remove('active');
+                    display.classList.remove('active');
+                }
+            }
+            
+            document.addEventListener('click', closeOnOutside);
+            document.addEventListener('touchend', closeOnOutside);
+            
+            // جلوگیری از بستن dropdown وقتی داخل آن کلیک می‌شود
+            dropdown.addEventListener('click', function(e) {
+                e.stopPropagation();
+            });
+            
+            dropdown.addEventListener('touchend', function(e) {
+                e.stopPropagation();
+            });
         }
         
-        // به‌روزرسانی نمایش وقتی checkbox تغییر می‌کند
-        checkboxes.forEach(checkbox => {
-            checkbox.addEventListener('change', updateDisplay);
+        // راه‌اندازی multi-selectها
+        setupMultiSelect('sport_type_display', 'sport_type_dropdown');
+        
+        // بهبود تجربه لمسی برای select boxes
+        document.querySelectorAll('.filter-select').forEach(select => {
+            select.addEventListener('touchstart', function() {
+                this.style.transform = 'scale(0.98)';
+            }, { passive: true });
+            
+            select.addEventListener('touchend', function() {
+                setTimeout(() => {
+                    this.style.transform = '';
+                }, 150);
+            }, { passive: true });
         });
         
-        // مقداردهی اولیه
-        updateDisplay();
+        // بهبود تجربه لمسی برای دکمه‌ها
+        document.querySelectorAll('.btn-filter, .btn-filter-reset').forEach(btn => {
+            btn.addEventListener('touchstart', function() {
+                this.style.transform = 'scale(0.95)';
+            }, { passive: true });
+            
+            btn.addEventListener('touchend', function() {
+                setTimeout(() => {
+                    this.style.transform = '';
+                }, 150);
+            }, { passive: true });
+        });
     });
 </script>
 {% endblock %}
+

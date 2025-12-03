@@ -20,6 +20,3 @@ def star_rating(value):
 
 
 
-
-
-

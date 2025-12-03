@@ -18,8 +18,3 @@ def star_rating(value):
     return stars
 
 
-
-
-
-
-

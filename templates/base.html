@@ -18,16 +18,48 @@
             background: #f8f9fa;
             min-height: 100vh;
             direction: rtl;
+            position: relative;
+        }
+        
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            opacity: 0.6;
+            z-index: -1;
+        }
+        
+        /* بک‌گراند پیش‌فرض برای باشگاه */
+        body::before {
+            background-image: url('https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=1920&q=80');
+        }
+        
+        /* بک‌گراند برای رستوران */
+        body.restaurant-page::before {
+            background-image: url('https://images.unsplash.com/photo-1490645935967-10de6ba17061?w=1920&q=80');
+        }
+        
+        /* بک‌گراند برای مربیان */
+        body.trainer-page::before {
+            background-image: url('https://images.unsplash.com/photo-1581009146145-b5ef050c2e1e?w=1920&q=80');
         }
         
         .main-wrapper {
             max-width: 1600px;
             margin: 0 auto;
             padding: 20px;
+            position: relative;
+            z-index: 1;
         }
         
         .categories-nav {
-            background: white;
+            background: rgba(255, 255, 255, 0.95);
             padding: 15px 30px;
             border-radius: 12px;
             margin-bottom: 20px;
@@ -37,6 +69,7 @@
             align-items: center;
             gap: 15px;
             flex-wrap: wrap;
+            backdrop-filter: blur(5px);
         }
         
         .category-item {
@@ -73,13 +106,14 @@
         }
         
         .header {
-            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            background: rgba(44, 62, 80, 0.9);
             color: white;
             padding: 25px 40px;
             border-radius: 12px;
             margin-bottom: 30px;
             text-align: center;
             box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            backdrop-filter: blur(5px);
         }
         
         .header h1 {
@@ -110,10 +144,11 @@
         }
         
         .content {
-            background: white;
+            background: rgba(255, 255, 255, 0.95);
             padding: 30px;
             border-radius: 12px;
             box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+            backdrop-filter: blur(5px);
         }
         
         .btn {
@@ -152,12 +187,12 @@
     </style>
     {% block extra_css %}{% endblock %}
 </head>
-<body>
+<body class="{% block body_class %}{% endblock %}">
     <div class="main-wrapper">
         {% block categories_nav %}
         <div class="categories-nav">
             {% for category in categories %}
-            <a href="{% if category.name == 'restaurant' %}{% url 'restaurants:list' %}{% else %}#{% endif %}" class="category-item">
+            <a href="{% if category.name == 'gym' %}{% url 'gym:list' %}{% elif category.name == 'restaurant' %}{% url 'restaurants:list' %}{% elif category.name == 'trainer' %}{% url 'trainers:list' %}{% else %}#{% endif %}" class="category-item">
                 {% if category.icon %}<span class="category-icon">{{ category.icon }}</span>{% endif %}
                 <span>{{ category.get_name_display }}</span>
             </a>
@@ -165,10 +200,12 @@
         </div>
         {% endblock %}
         
+        {% block header %}
         <div class="header">
-            <h1>🍽️ اپلیکیشن رستوران</h1>
-            <p>رستوران‌های برتر شهر</p>
+            <h1>💪 اپلیکیشن باشگاه</h1>
+            <p>باشگاه‌های برتر شهر</p>
         </div>
+        {% endblock %}
         
         <div class="content-wrapper">
             {% block sidebar_left %}{% endblock %}

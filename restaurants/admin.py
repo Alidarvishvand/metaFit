@@ -70,9 +70,9 @@ class RatingAdmin(admin.ModelAdmin):
 
 @admin.register(Advertisement)
 class AdvertisementAdmin(admin.ModelAdmin):
-    list_display = ['title', 'ad_type', 'position', 'order', 'is_active', 'created_at']
-    list_filter = ['ad_type', 'position', 'is_active', 'created_at']
+    list_display = ['title', 'section', 'ad_type', 'position', 'order', 'is_active', 'created_at']
+    list_filter = ['section', 'ad_type', 'position', 'is_active', 'created_at']
     search_fields = ['title']
-    fields = ['title', 'ad_type', 'position', 'order', 'is_active', 'link', 'image', 'gif_file', 'video_file', 'video_url']
+    fields = ['title', 'section', 'ad_type', 'position', 'order', 'is_active', 'link', 'image', 'gif_file', 'video_file', 'video_url']
     verbose_name = "تبلیغ"
     verbose_name_plural = "تبلیغات"

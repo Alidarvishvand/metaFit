@@ -23,6 +23,16 @@ def restaurant_list(request):
     city_filter = request.GET.get('city')
     rating_filter = request.GET.get('rating')
     meal_type_filters = request.GET.getlist('meal_type')  # چند انتخابی
+    search_query = request.GET.get('search', '').strip()
+    
+    # جستجوی پیشرفته
+    if search_query:
+        from django.db.models import Q
+        restaurants_list = restaurants_list.filter(
+            Q(name__icontains=search_query) |
+            Q(address__icontains=search_query) |
+            Q(description__icontains=search_query)
+        )
     
     if city_filter:
         restaurants_list = restaurants_list.filter(city__name=city_filter)
@@ -43,10 +53,10 @@ def restaurant_list(request):
     page_number = request.GET.get('page', 1)
     restaurants = paginator.get_page(page_number)
     
-    # دریافت تبلیغات فعال - اصلاح موقعیت
+    # دریافت تبلیغات فعال برای رستوران - اصلاح موقعیت
     # در RTL: left در template = right در دیتابیس
-    left_ads = Advertisement.objects.filter(position='right', is_active=True).order_by('order')[:3]
-    right_ads = Advertisement.objects.filter(position='left', is_active=True).order_by('order')[:3]
+    left_ads = Advertisement.objects.filter(section='restaurant', position='right', is_active=True).order_by('order')[:3]
+    right_ads = Advertisement.objects.filter(section='restaurant', position='left', is_active=True).order_by('order')[:3]
     
     # دریافت لیست شهرها برای فیلتر
     cities = City.objects.all()
@@ -63,6 +73,7 @@ def restaurant_list(request):
         'current_city': city_filter,
         'current_rating': rating_filter,
         'current_meal_types': meal_type_filters,
+        'search_query': search_query,
     }
     
     return render(request, 'restaurants/list.html', context)
